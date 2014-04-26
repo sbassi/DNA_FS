@@ -177,14 +177,17 @@ with open("input.js") as jsfile:
 
 for f in range(cfg["f_range_min"],cfg["f_range_max"],5):
     for m in range(cfg["m_range_min"],cfg["m_range_max"],5):
-        coverage = set()
-        for n in range(cfg['repe']):        
-            p, all_together = make_new_pop(cfg['p_nbr'], cfg['fertility_rate'], 
-                                           cfg['max_sons'])
-            all_together_f, all_together_m = separate_sex(all_together)
-            put_fingerprint(f, m)
-            coverage.add(p.get_coverage(all_together))
-        avrage_cov = sum(coverage)/cfg['repe']
-        print f,m,avrage_cov
+        if m>=f:
+            pass
+        else:
+            coverage = set()
+            for n in range(cfg['repe']):        
+                p, all_together = make_new_pop(cfg['p_nbr'], cfg['fertility_rate'], 
+                                               cfg['max_sons'])
+                all_together_f, all_together_m = separate_sex(all_together)
+                put_fingerprint(f, m)
+                coverage.add(p.get_coverage(all_together))
+            avrage_cov = sum(coverage)/cfg['repe']
+            print f,m,avrage_cov
 
 
