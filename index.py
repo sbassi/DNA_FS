@@ -2,9 +2,14 @@
 
 import uuid
 import random
+import json
 
 
 class Person():
+    """
+    Generate individuals
+    """
+
     def __init__(self, padre=None, madre=None, generacion=0):
         #self.reset()
         self.dni = str(uuid.uuid4())
@@ -36,13 +41,9 @@ class Person():
                 nuevos_hijos.add(np)
                 nuevos_hijos_dni.add(np.dni)
 
-            # Agregarlo a self.hijos propio
             self.sons = self.sons.union(nuevos_hijos_dni)
-            # Agregarlo a self.hijos de conyuge
             conyuge.sons = conyuge.sons.union(nuevos_hijos_dni)
-            # Agregar ID de la pareja
             self.pareja_con = conyuge.dni
-            # Agregar hijos al pool total?
             return nuevos_hijos
 
     def __str__(self):
@@ -50,6 +51,9 @@ class Person():
         return "Generacion: %s; DNI: %s; Sexo: %s"%(self.generacion,self.dni, self.sex) 
 
 class Population():
+    """
+    Generate population with different characteristics
+    """
 
     def __init__(self, cantidad):
         self.population = set()
@@ -124,9 +128,6 @@ class Population():
                 self._son_covered_rec(x)
                 self._parents_covered_rec(x)
                 self._silbing_covered(x)
-
-
-        #print 'len covered, ', len(self.covered)
         coverage = round((float(len(self.covered))/all_pop_len)*100,2)
         return coverage
 
@@ -170,41 +171,20 @@ def put_fingerprint(fingerprinted_f_rate, fingerprinted_m_rate):
 def avg_coverage(f,m,pop,n):
     return None
 
+with open("input.js") as jsfile:
+    cfg = json.load(jsfile)
 
 
-p_nbr = 10000
-fertility_rate = .8
-max_sons = 3
-repe = 10
-for f in range(30,35,5):
-    for m in range(15,20,5):
+for f in range(cfg["f_range_min"],cfg["f_range_max"],5):
+    for m in range(cfg["m_range_min"],cfg["m_range_max"],5):
         coverage = set()
-        for n in range(repe):        
-            p, all_together = make_new_pop(p_nbr, fertility_rate, max_sons)
+        for n in range(cfg['repe']):        
+            p, all_together = make_new_pop(cfg['p_nbr'], cfg['fertility_rate'], 
+                                           cfg['max_sons'])
             all_together_f, all_together_m = separate_sex(all_together)
             put_fingerprint(f, m)
             coverage.add(p.get_coverage(all_together))
-        avrage_cov = sum(coverage)/repe
+        avrage_cov = sum(coverage)/cfg['repe']
         print f,m,avrage_cov
-
-
-
-"""
-5 0 17.392
-5 5 31.252
-5 10 47.347
-10 0 34.904
-10 5 37.672
-10 10 51.428
-15 0 47.516
-15 5 57.177
-15 10 64.96
-20 0 52.152
-20 5 65.654
-20 10 71.657
-25 0 65.99
-25 5 72.045
-25 10 77.104
-"""
 
 
